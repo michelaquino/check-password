@@ -1,0 +1,8 @@
+package: gitlab.globoi.com/michel.aquino/check-password
+import:
+- package: github.com/labstack/echo
+  version: v3.2.1
+- package: github.com/labstack/gommon
+  version: 0.2.2
+  subpackages:
+  - color
