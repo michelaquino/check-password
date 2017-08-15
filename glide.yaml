@@ -6,3 +6,5 @@ import:
   version: 0.2.2
   subpackages:
   - color
+- package: github.com/asaskevich/govalidator
+  version: v6
