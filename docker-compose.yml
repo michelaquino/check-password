@@ -6,3 +6,4 @@ services:
             - 8888:8888
         environment:
             - PORT=8888
+            - LOG_LEVEL=debug
