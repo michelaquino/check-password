@@ -1,5 +1,5 @@
-hash: 0f424dee0c330da3b1a33018057eb8ca272062ba01caacb82ec4e4c58dc8cb58
-updated: 2017-08-15T16:34:06.417012865-03:00
+hash: 81c5e3d703ab9e3c0eb981d1c7cc7d6b75784a28bd24ef08ca9fa9f6e74e02fd
+updated: 2017-08-15T16:55:47.55832671-03:00
 imports:
 - name: github.com/asaskevich/govalidator
   version: 4918b99a7cb949bb295f3c7bbaf24b577d806e35
@@ -18,6 +18,18 @@ imports:
   version: e746df99fe4a3986f4d4f79e13c1e0117ce9c2f7
 - name: github.com/valyala/fasttemplate
   version: dcecefd839c4193db0d35b88ec65b4c12d360ab0
+- name: go.uber.org/atomic
+  version: 4e336646b2ef9fc6e47be8e21594178f98e5ebcf
+- name: go.uber.org/multierr
+  version: 3c4937480c32f4c13a875a1829af76c98ca3d40a
+- name: go.uber.org/zap
+  version: 9d9d6135afe89b6fc4a05e9a8552526caba38048
+  subpackages:
+  - buffer
+  - internal/bufferpool
+  - internal/color
+  - internal/exit
+  - zapcore
 - name: golang.org/x/crypto
   version: 453249f01cfeb54c3d549ddb75ff152ca243f9d8
   subpackages:
