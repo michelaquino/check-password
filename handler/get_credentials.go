@@ -9,18 +9,17 @@ import (
 	"github.com/labstack/echo"
 )
 
-func GetCheck(echoContext echo.Context) error {
-	return echoContext.Render(http.StatusOK, "login", "")
+func GetCredentials(echoContext echo.Context) error {
+	return echoContext.Render(http.StatusOK, "getCredentials", "")
 }
 
-func PostCheck(echoContext echo.Context) error {
+func PostCredentials(echoContext echo.Context) error {
 	credentials := new(models.Credentials)
 
 	if err := echoContext.Bind(credentials); err != nil {
-		return echoContext.Render(http.StatusInternalServerError, "login", "")
+		return echoContext.Render(http.StatusInternalServerError, "getCredentials", "")
 	}
 
 	repository.SaveCredentials(credentials)
-
-	return echoContext.Render(http.StatusOK, "login", "")
+	return echoContext.Render(http.StatusOK, "getCredentials", "")
 }

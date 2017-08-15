@@ -14,9 +14,9 @@ func main() {
 	echoServer.Static("/static", "static")
 
 	echoServer.Renderer = templates.ViewTemplates
-	// echoServer.GET("/", Index)
-	echoServer.GET("/check", handler.GetCheck)
-	echoServer.POST("/check", handler.PostCheck)
+	echoServer.GET("/", handler.GetListCredentials)
+	echoServer.GET("/credentials", handler.GetCredentials)
+	echoServer.POST("/credentials", handler.PostCredentials)
 
 	echoServer.Logger.Fatal(echoServer.Start(":8888"))
 }
