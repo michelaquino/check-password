@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
+	"gitlab.globoi.com/michel.aquino/check-password/context"
 	"gitlab.globoi.com/michel.aquino/check-password/models"
 	"gitlab.globoi.com/michel.aquino/check-password/repository"
 
@@ -15,9 +17,12 @@ func GetCredentials(echoContext echo.Context) error {
 }
 
 func PostCredentials(echoContext echo.Context) error {
+	log := context.GetLogger()
+
 	credentials := new(models.Credentials)
 
 	if err := echoContext.Bind(credentials); err != nil {
+		log.Error("Bind form to object", "Error", err.Error())
 		return echoContext.Render(http.StatusInternalServerError, "getCredentials", nil)
 	}
 
@@ -27,6 +32,7 @@ func PostCredentials(echoContext echo.Context) error {
 			ErrorMessage: "O e-mail é inválido",
 		}
 
+		log.Info("Validate email", "Error", fmt.Sprintf("Invalid email: %s", credentials.Email))
 		return echoContext.Render(http.StatusInternalServerError, "getCredentials", viewModel)
 	}
 
@@ -36,6 +42,7 @@ func PostCredentials(echoContext echo.Context) error {
 			ErrorMessage: "A senha deve ter mais que 8 caracteres",
 		}
 
+		log.Info("Validate password length", "Error", "Password length invalid")
 		return echoContext.Render(http.StatusInternalServerError, "getCredentials", viewModel)
 	}
 
@@ -46,9 +53,11 @@ func PostCredentials(echoContext echo.Context) error {
 			ErrorMessage: "Ocorreu um erro ao salvar as credenciais",
 		}
 
+		log.Error("Save credentials on database", "Error", err.Error())
 		return echoContext.Render(http.StatusInternalServerError, "getCredentials", viewModel)
 	}
 
+	log.Info("Save credentials", "Success", "Credentials save with success")
 	return echoContext.Render(http.StatusOK, "getCredentials", nil)
 }
 
