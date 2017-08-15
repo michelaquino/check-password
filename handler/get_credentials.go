@@ -20,10 +20,15 @@ func PostCredentials(echoContext echo.Context) error {
 	log := context.GetLogger()
 
 	credentials := new(models.Credentials)
-
 	if err := echoContext.Bind(credentials); err != nil {
 		log.Error("Bind form to object", "Error", err.Error())
-		return echoContext.Render(http.StatusInternalServerError, "getCredentials", nil)
+
+		viewModel := GetCredentialViewModel{
+			HasError:     true,
+			ErrorMessage: "Ocorreu um erro inesperado",
+		}
+
+		return echoContext.Render(http.StatusInternalServerError, "getCredentials", viewModel)
 	}
 
 	if credentials.Email == "" || !govalidator.IsEmail(credentials.Email) {
