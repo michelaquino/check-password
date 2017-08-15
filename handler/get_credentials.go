@@ -40,7 +40,15 @@ func PostCredentials(echoContext echo.Context) error {
 	}
 
 	credentials.SetPasswordHash()
-	repository.SaveCredentials(credentials)
+	if err := repository.SaveCredentials(credentials); err != nil {
+		viewModel := GetCredentialViewModel{
+			HasError:     true,
+			ErrorMessage: "Ocorreu um erro ao salvar as credenciais",
+		}
+
+		return echoContext.Render(http.StatusInternalServerError, "getCredentials", viewModel)
+	}
+
 	return echoContext.Render(http.StatusOK, "getCredentials", nil)
 }
 

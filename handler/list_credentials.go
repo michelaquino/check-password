@@ -8,7 +8,7 @@ import (
 )
 
 func GetListCredentials(echoContext echo.Context) error {
-	credetialsList := repository.ListCredentials()
+	credetialsList, _ := repository.ListCredentials()
 
 	return echoContext.Render(http.StatusOK, "listCredentials", credetialsList)
 }
