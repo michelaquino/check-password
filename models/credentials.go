@@ -11,13 +11,13 @@ import (
 )
 
 type Credentials struct {
-	Email              string `form:"email"`
+	Email              string `form:"email" bson:"email,omitempty"`
 	Password           string `form:"password"`
-	PasswordMD5Hash    string
-	PasswordSha1Hash   string
-	PasswordSha256Hash string
-	PasswordSha512Hash string
-	PasswordBcryptHash string
+	PasswordMD5Hash    string `bson:"passwordMD5Hash,omitempty"`
+	PasswordSha1Hash   string `bson:"passwordSha1Hash,omitempty"`
+	PasswordSha256Hash string `bson:"passwordSha256Hash,omitempty"`
+	PasswordSha512Hash string `bson:"passwordSha512Hash,omitempty"`
+	PasswordBcryptHash string `bson:"passwordBcryptHash,omitempty"`
 }
 
 func (c *Credentials) SetPasswordHash() {

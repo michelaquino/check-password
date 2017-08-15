@@ -4,6 +4,14 @@ services:
         build: .
         ports: 
             - 8888:8888
+        depends_on:
+            - mongodb
         environment:
             - PORT=8888
             - LOG_LEVEL=debug
+            - MONGO_URL=mongodb 
+            - MONGO_PORT=27017 
+            - MONGO_TIMEOUT=60
+            - MONGO_DATABASE_NAME=api
+    mongodb:
+        image: mongo:3.4.7

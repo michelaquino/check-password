@@ -1,7 +1,7 @@
 package context
 
 import (
-	"os"
+	"strings"
 	"sync"
 
 	"go.uber.org/zap"
@@ -120,7 +120,9 @@ func getNewLogInstance() *zap.Logger {
 }
 
 func getLogLevel() zapcore.Level {
-	logLevelConfig := os.Getenv("LOG_LEVEL")
+	apiConfig := GetAPIConfig()
+	logLevelConfig := strings.ToLower(apiConfig.LogConfig.LogLevel)
+
 	if logLevelConfig == "debug" {
 		return zap.DebugLevel
 	}

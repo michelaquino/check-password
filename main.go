@@ -1,6 +1,7 @@
 package main
 
 import (
+	"gitlab.globoi.com/michel.aquino/check-password/context"
 	"gitlab.globoi.com/michel.aquino/check-password/handler"
 	"gitlab.globoi.com/michel.aquino/check-password/templates"
 
@@ -8,6 +9,8 @@ import (
 )
 
 func main() {
+	context.GetAPIConfig()
+
 	echoServer := echo.New()
 
 	// Static files
