@@ -23,3 +23,10 @@ func main() {
 
 	echoServer.Logger.Fatal(echoServer.Start(":8888"))
 }
+
+// db.credentials.find({"_id": ObjectId("5994b2d48f244f71eb4d8569")})
+
+// db.credentials.update(
+//     {"_id": ObjectId("5994b2d48f244f71eb4d8569")},
+//     {$set: {"passwordMD5HashHacked": true}}
+// )

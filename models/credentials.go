@@ -16,15 +16,21 @@ import (
 )
 
 type Credentials struct {
-	Email              string `form:"email" bson:"email"`
-	Password           string `form:"password"`
-	EmailBreached      bool   `bson:"emailBreached"`
-	PasswordPwned      bool   `bson:"passwordPwned"`
-	PasswordMD5Hash    string `bson:"passwordMD5Hash"`
-	PasswordSha1Hash   string `bson:"passwordSha1Hash"`
-	PasswordSha256Hash string `bson:"passwordSha256Hash"`
-	PasswordSha512Hash string `bson:"passwordSha512Hash"`
-	PasswordBcryptHash string `bson:"passwordBcryptHash"`
+	Email         string `form:"email" bson:"email"`
+	Password      string `form:"password"`
+	EmailPwned    bool   `bson:"emailPwned"`
+	PasswordPwned bool   `bson:"passwordPwned"`
+
+	PasswordMD5Hash          string `bson:"passwordMD5Hash"`
+	PasswordMD5HashHacked    bool   `bson:"passwordMD5HashHacked"`
+	PasswordSha1Hash         string `bson:"passwordSha1Hash"`
+	PasswordSha1HashHacked   bool   `bson:"passwordSha1HashHacked"`
+	PasswordSha256Hash       string `bson:"passwordSha256Hash"`
+	PasswordSha256HashHacked bool   `bson:"passwordSha256HashHacked"`
+	PasswordSha512Hash       string `bson:"passwordSha512Hash"`
+	PasswordSha512HashHacked bool   `bson:"passwordSha512HashHacked"`
+	PasswordBcryptHash       string `bson:"passwordBcryptHash"`
+	PasswordBcryptHashHacked bool   `bson:"passwordBcryptHashHacked"`
 }
 
 func (c *Credentials) SetPasswordHash() {
@@ -49,13 +55,13 @@ func (c *Credentials) CheckLeaks() {
 	var waitGroup sync.WaitGroup
 	waitGroup.Add(2)
 
-	go c.checkEmailBreached(&waitGroup)
+	go c.checkEmailPwned(&waitGroup)
 	go c.checkPasswordPwned(&waitGroup)
 
 	waitGroup.Wait()
 }
 
-func (c *Credentials) checkEmailBreached(waitGroup *sync.WaitGroup) {
+func (c *Credentials) checkEmailPwned(waitGroup *sync.WaitGroup) {
 	log := context.GetLogger()
 	defer waitGroup.Done()
 
@@ -67,7 +73,7 @@ func (c *Credentials) checkEmailBreached(waitGroup *sync.WaitGroup) {
 	}
 
 	if responseCode == http.StatusOK {
-		c.EmailBreached = true
+		c.EmailPwned = true
 	}
 }
 
