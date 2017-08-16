@@ -23,7 +23,7 @@ func SaveCredentials(credentials *models.Credentials) error {
 	return nil
 }
 
-func ListCredentials() ([]models.Credentials, error) {
+func ListCredentials(onlyHackedCredentials bool) ([]models.Credentials, error) {
 	log := context.GetLogger()
 
 	dbSession := context.GetMongoSession()
@@ -31,8 +31,18 @@ func ListCredentials() ([]models.Credentials, error) {
 
 	connection := dbSession.DB("check-password").C("credentials")
 
+	query := bson.M{}
+	if onlyHackedCredentials {
+		query = bson.M{
+			"$or": []bson.M{
+				bson.M{"emailBreached": true},
+				bson.M{"passwordPwned": true},
+			},
+		}
+	}
+
 	credentialsList := []models.Credentials{}
-	if err := connection.Find(bson.M{}).All(&credentialsList); err != nil {
+	if err := connection.Find(query).All(&credentialsList); err != nil {
 		log.Error("Get all credentials on DB", "Error", err.Error())
 		return nil, err
 	}

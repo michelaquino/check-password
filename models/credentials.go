@@ -16,15 +16,15 @@ import (
 )
 
 type Credentials struct {
-	Email              string `form:"email" bson:"email,omitempty"`
-	EmailBreached      bool   `bson:"EmailBreached,omitempty"`
+	Email              string `form:"email" bson:"email"`
 	Password           string `form:"password"`
-	PasswordPwned      bool   `bson:"passwordPwned,omitempty"`
-	PasswordMD5Hash    string `bson:"passwordMD5Hash,omitempty"`
-	PasswordSha1Hash   string `bson:"passwordSha1Hash,omitempty"`
-	PasswordSha256Hash string `bson:"passwordSha256Hash,omitempty"`
-	PasswordSha512Hash string `bson:"passwordSha512Hash,omitempty"`
-	PasswordBcryptHash string `bson:"passwordBcryptHash,omitempty"`
+	EmailBreached      bool   `bson:"emailBreached"`
+	PasswordPwned      bool   `bson:"passwordPwned"`
+	PasswordMD5Hash    string `bson:"passwordMD5Hash"`
+	PasswordSha1Hash   string `bson:"passwordSha1Hash"`
+	PasswordSha256Hash string `bson:"passwordSha256Hash"`
+	PasswordSha512Hash string `bson:"passwordSha512Hash"`
+	PasswordBcryptHash string `bson:"passwordBcryptHash"`
 }
 
 func (c *Credentials) SetPasswordHash() {
