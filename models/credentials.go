@@ -6,7 +6,9 @@ import (
 	"crypto/sha256"
 	"crypto/sha512"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"sync"
 
@@ -17,8 +19,9 @@ import (
 
 type Credentials struct {
 	Email         string `form:"email" bson:"email"`
-	Password      string `form:"password"`
+	Password      string `form:"password" bson:"-"`
 	EmailPwned    bool   `bson:"emailPwned"`
+	EmailLeakList []leak `bson:"emailLeakList"`
 	PasswordPwned bool   `bson:"passwordPwned"`
 
 	PasswordMD5Hash          string `bson:"passwordMD5Hash"`
@@ -66,15 +69,36 @@ func (c *Credentials) checkEmailPwned(waitGroup *sync.WaitGroup) {
 	defer waitGroup.Done()
 
 	url := fmt.Sprintf("https://haveibeenpwned.com/api/v2/breachedaccount/%s", c.Email)
-	responseCode, err := makeRequestToHaveibeenpwned(url)
+	response, err := makeRequestToHaveibeenpwned(url)
 	if err != nil {
-		log.Error("Error on make request to haveibeenpwned", "Error", err.Error())
+		log.Error("checkEmailPwned - Error on make request to haveibeenpwned", "Error", err.Error())
 		return
 	}
 
-	if responseCode == http.StatusOK {
-		c.EmailPwned = true
+	if response.StatusCode != http.StatusOK {
+		return
 	}
+
+	responseBody, err := ioutil.ReadAll(response.Body)
+	defer response.Body.Close()
+
+	if err != nil {
+		log.Error("Read response body", "Error", err.Error())
+		return
+	}
+
+	leakList := []leak{}
+	if response.StatusCode == http.StatusOK {
+		err = json.Unmarshal(responseBody, &leakList)
+		if err != nil {
+			log.Error("Parse response body to object", "Error", err.Error())
+			return
+		}
+	}
+
+	c.EmailPwned = true
+	c.EmailLeakList = leakList
+	log.Info("Check if email is pwned", "Success", "")
 }
 
 func (c *Credentials) checkPasswordPwned(waitGroup *sync.WaitGroup) {
@@ -82,46 +106,38 @@ func (c *Credentials) checkPasswordPwned(waitGroup *sync.WaitGroup) {
 	defer waitGroup.Done()
 
 	url := fmt.Sprintf("https://haveibeenpwned.com/api/v2/pwnedpassword/%s", c.PasswordSha1Hash)
-	responseCode, err := makeRequestToHaveibeenpwned(url)
+	response, err := makeRequestToHaveibeenpwned(url)
 	if err != nil {
-		log.Error("Error on make request to haveibeenpwned", "Error", err.Error())
+		log.Error("checkPasswordPwned - Error on make request to haveibeenpwned", "Error", err.Error())
 		return
 	}
 
-	if responseCode == http.StatusOK {
+	if response.StatusCode == http.StatusOK {
 		c.PasswordPwned = true
 	}
+
+	log.Info("Check if password is pwned", "Success", "")
 }
 
-func makeRequestToHaveibeenpwned(url string) (int, error) {
+func makeRequestToHaveibeenpwned(url string) (*http.Response, error) {
 	log := context.GetLogger()
 
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		log.Error("Build request object", "Error", err.Error())
-		return 0, err
+		return nil, err
 	}
 
 	httpClient := http.Client{}
 	response, err := httpClient.Do(request)
 	if err != nil {
 		log.Error("Make request to haveibeenpwned", "Error", err.Error())
-		return 0, err
+		return nil, err
 	}
 
-	defer response.Body.Close()
-	return response.StatusCode, nil
+	return response, nil
+}
 
-	// if response.StatusCode != http.StatusOK {
-	// 	log.Info("Verify response code", "Error", fmt.Sprintf("Response code: %d", response.StatusCode))
-	// 	return
-	// }
-
-	// responseBody, err := ioutil.ReadAll(response.Body)
-	// if err != nil {
-	// 	log.Error("Read response body", "Error", err.Error())
-	// 	return
-	// }
-
-	// fmt.Println("Response body: ", string(responseBody))
+type leak struct {
+	Title string `json:"Title"`
 }

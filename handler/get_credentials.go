@@ -41,10 +41,10 @@ func PostCredentials(echoContext echo.Context) error {
 		return echoContext.Render(http.StatusInternalServerError, "getCredentials", viewModel)
 	}
 
-	if len(credentials.Password) < 8 {
+	if credentials.Password == "" {
 		viewModel := GetCredentialViewModel{
 			HasError:     true,
-			ErrorMessage: "A senha deve ter mais que 8 caracteres",
+			ErrorMessage: "A senha não pode ser vazia",
 		}
 
 		log.Info("Validate password length", "Error", "Password length invalid")
