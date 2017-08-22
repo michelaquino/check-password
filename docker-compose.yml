@@ -1,13 +1,27 @@
 version: '3'
 services:
-    app:
-        build: .
-        ports: 
-            - 8888:8888
+    # app:
+    #     build:
+    #         context: .
+    #         dockerfile: Dockerfile-main
+    #     ports: 
+    #         - 8888:8888
+    #     depends_on:
+    #         - mongodb
+    #     environment:
+    #         - PORT=8888
+    #         - LOG_LEVEL=debug
+    #         - MONGO_URL=mongodb 
+    #         - MONGO_PORT=27017 
+    #         - MONGO_TIMEOUT=60
+    #         - MONGO_DATABASE_NAME=api
+    hashcat-runner:
+        build:
+            context: .
+            dockerfile: Dockerfile-hashcat
         depends_on:
             - mongodb
         environment:
-            - PORT=8888
             - LOG_LEVEL=debug
             - MONGO_URL=mongodb 
             - MONGO_PORT=27017 

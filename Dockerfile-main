@@ -7,10 +7,10 @@ ADD . /go/src/gitlab.globoi.com/michel.aquino/check-password
 
 # Build the api command inside the container.
 WORKDIR /go/src/gitlab.globoi.com/michel.aquino/check-password
-RUN go build -o app
+RUN GOOS=linux GOARCH=amd64 go build cmd/main.go
 
 # Run the outyet command by default when the container starts.
-ENTRYPOINT /go/src/gitlab.globoi.com/michel.aquino/check-password/app
+ENTRYPOINT /go/src/gitlab.globoi.com/michel.aquino/check-password/main
 
 # Document that the service listens on port 8888.
 EXPOSE 8888

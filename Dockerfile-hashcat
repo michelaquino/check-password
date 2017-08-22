@@ -1,0 +1,8 @@
+FROM golang:latest
+
+ADD . /go/src/gitlab.globoi.com/michel.aquino/check-password
+
+WORKDIR /go/src/gitlab.globoi.com/michel.aquino/check-password
+RUN GOOS=linux GOARCH=amd64 go build cmd/hashcat_runner.go
+
+ENTRYPOINT /go/src/gitlab.globoi.com/michel.aquino/check-password/hashcat_runner
