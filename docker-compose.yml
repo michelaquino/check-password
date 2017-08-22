@@ -11,8 +11,7 @@ services:
         environment:
             - PORT=8888
             - LOG_LEVEL=debug
-            - DBAAS_MONGODB_ENDPOINT=mongodb://:@databaseMongo:27017/check-password
-            - MONGO_PORT=27017 
+            - DBAAS_MONGODB_ENDPOINT=mongodb://:@databaseMongo:27017/check-password?replicaSet=
             - MONGO_TIMEOUT=60
     # hashcat-runner:
     #     build:
