@@ -123,6 +123,7 @@ func (c *Credentials) checkPasswordPwned(waitGroup *sync.WaitGroup) {
 
 func makeRequestToHaveibeenpwned(url string) (*http.Response, error) {
 	log := context.GetLogger()
+	config := context.GetAPIConfig()
 
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -132,7 +133,11 @@ func makeRequestToHaveibeenpwned(url string) (*http.Response, error) {
 
 	httpClient := http.Client{
 		Timeout: time.Duration(3 * time.Second),
+		Transport: &http.Transport{
+			Proxy: http.ProxyURL(config.ProxyURL),
+		},
 	}
+
 	response, err := httpClient.Do(request)
 	if err != nil {
 		log.Error("Make request to haveibeenpwned", "Error", err.Error())

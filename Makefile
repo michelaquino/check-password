@@ -1,8 +1,8 @@
 TSURU_DEPLOY_FILES 	 			:= main
 
-# DEV
-TSURU_APP_NAME_DEV  		:= check-password-dev
-LOG_LEVEL_DEV				:= info
+TSURU_APP_NAME  		:= check-password-prod
+LOG_LEVEL				:= info
+PROXY_URL				:= http://proxy.globoi.com:3128
 
 ######################## LOCAL ########################
 ######## Docker compose ########
@@ -21,14 +21,14 @@ docker-compose-stop-api:
 .PHONY: run
 run: docker-compose-build-api docker-compose-up-api
 
-######################## DEV ########################
+######################## TSURU ########################
 # Set environment variables
-.PHONY: set-tsuru-env-variables-dev
-set-tsuru-env-variables-dev:
-	tsuru env-set LOG_LEVEL=$(LOG_LEVEL_DEV) -a $(TSURU_APP_NAME_DEV) --no-restart
+.PHONY: set-tsuru-env-variables-prod
+set-tsuru-env-variables-prod:
+	tsuru env-set LOG_LEVEL=$(LOG_LEVEL) PROXY_URL=$(PROXY_URL) -a $(TSURU_APP_NAME) --no-restart
 
 # Deploy to tsuru
-.PHONY: deploy-tsuru-dev
-deploy-tsuru-dev:
+.PHONY: deploy-tsuru-prod
+deploy-tsuru-prod: set-tsuru-env-variables-prod
 	GOOS=linux GOARCH=amd64 go build cmd/main.go
-	tsuru app-deploy public static $(TSURU_DEPLOY_FILES) Procfile tsuru.yaml -a $(TSURU_APP_NAME_DEV)
+	tsuru app-deploy public static $(TSURU_DEPLOY_FILES) Procfile tsuru.yaml -a $(TSURU_APP_NAME)
