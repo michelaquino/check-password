@@ -3,6 +3,7 @@ package context
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"strconv"
 	"sync"
 	"time"
@@ -50,22 +51,42 @@ func getLogConfig() *LogConfig {
 }
 
 func getMongoConfig() *MongoConfig {
-	mongoURL := os.Getenv("MONGO_URL")
-	mongoPort := getMongoPort()
+	mongoURL := os.Getenv("DBAAS_MONGODB_ENDPOINT")
 
-	mongoAddress := fmt.Sprintf("%s:%d", mongoURL, mongoPort)
-	mongoDatabaseName := os.Getenv("MONGO_DATABASE_NAME")
-	mongoTimeout := getMongoTimeout()
-	mongoUserName := os.Getenv("MONGO_DATABASE_USERNAME")
-	mongoPassword := os.Getenv("MONGO_DATABASE_PASSWORD")
+	pattern := regexp.MustCompile("(\\w+)://(.*):(.*)@(.*):([0-9]+)/(.*)?$")
+	match := pattern.FindAllStringSubmatch(mongoURL, 3)
 
-	return &MongoConfig{
-		Address:      mongoAddress,
-		DatabaseName: mongoDatabaseName,
-		Timeout:      mongoTimeout,
-		Username:     mongoUserName,
-		Password:     mongoPassword,
+	mongoConfig := MongoConfig{}
+	if len(match) > 0 {
+		fmt.Println("match: ", match)
+		if len(match[0]) > 2 {
+			mongoConfig.Username = match[0][2]
+		}
+
+		if len(match[0]) > 3 {
+			mongoConfig.Password = match[0][3]
+		}
+
+		mongoURL := ""
+		if len(match[0]) > 4 {
+			mongoURL = match[0][4]
+		}
+
+		mongoPort := 27017
+		if len(match[0]) > 5 {
+			port, err := strconv.Atoi(match[0][5])
+			if err == nil {
+				mongoPort = port
+			}
+		}
+		mongoConfig.Address = fmt.Sprintf("%s:%d", mongoURL, mongoPort)
+
+		if len(match[0]) > 6 {
+			mongoConfig.DatabaseName = match[0][6]
+		}
 	}
+
+	return &mongoConfig
 }
 
 func getMongoPort() int {

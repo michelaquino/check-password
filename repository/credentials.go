@@ -8,11 +8,12 @@ import (
 
 func SaveCredentials(credentials *models.Credentials) error {
 	log := context.GetLogger()
+	config := context.GetAPIConfig()
 
 	dbSession := context.GetMongoSession()
 	defer dbSession.Close()
 
-	connection := dbSession.DB("check-password").C("credentials")
+	connection := dbSession.DB(config.MongoDBConfig.DatabaseName).C("credentials")
 
 	if err := connection.Insert(&credentials); err != nil {
 		log.Error("Save credentials on DB", "Error", err.Error())
@@ -25,11 +26,12 @@ func SaveCredentials(credentials *models.Credentials) error {
 
 func ListCredentials(onlyHackedCredentials bool) ([]models.Credentials, error) {
 	log := context.GetLogger()
+	config := context.GetAPIConfig()
 
 	dbSession := context.GetMongoSession()
 	defer dbSession.Close()
 
-	connection := dbSession.DB("check-password").C("credentials")
+	connection := dbSession.DB(config.MongoDBConfig.DatabaseName).C("credentials")
 
 	query := bson.M{}
 	if onlyHackedCredentials {
@@ -48,5 +50,25 @@ func ListCredentials(onlyHackedCredentials bool) ([]models.Credentials, error) {
 	}
 
 	log.Info("Get all credentials on DB", "Success", "")
+	return credentialsList, nil
+}
+
+func GetUnprocessedCredentials() ([]models.Credentials, error) {
+	log := context.GetLogger()
+	config := context.GetAPIConfig()
+
+	dbSession := context.GetMongoSession()
+	defer dbSession.Close()
+
+	connection := dbSession.DB(config.MongoDBConfig.DatabaseName).C("credentials")
+	query := bson.M{"passwordProcessed": false}
+
+	credentialsList := []models.Credentials{}
+	if err := connection.Find(query).All(&credentialsList); err != nil {
+		log.Error("Get unprocess credentials on DB", "Error", err.Error())
+		return nil, err
+	}
+
+	log.Info("Get unprocess credentials on DB", "Success", "")
 	return credentialsList, nil
 }

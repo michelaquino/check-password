@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"sync"
+	"time"
 
 	"gitlab.globoi.com/michel.aquino/check-password/context"
 
@@ -18,11 +19,12 @@ import (
 )
 
 type Credentials struct {
-	Email         string `form:"email" bson:"email"`
-	Password      string `form:"password" bson:"-"`
-	EmailPwned    bool   `bson:"emailPwned"`
-	EmailLeakList []leak `bson:"emailLeakList"`
-	PasswordPwned bool   `bson:"passwordPwned"`
+	Email             string `form:"email" bson:"email"`
+	Password          string `form:"password" bson:"-"`
+	EmailPwned        bool   `bson:"emailPwned"`
+	EmailLeakList     []leak `bson:"emailLeakList"`
+	PasswordPwned     bool   `bson:"passwordPwned"`
+	PasswordProcessed bool   `bson:"passwordProcessed"`
 
 	PasswordMD5Hash          string `bson:"passwordMD5Hash"`
 	PasswordMD5HashHacked    bool   `bson:"passwordMD5HashHacked"`
@@ -128,7 +130,9 @@ func makeRequestToHaveibeenpwned(url string) (*http.Response, error) {
 		return nil, err
 	}
 
-	httpClient := http.Client{}
+	httpClient := http.Client{
+		Timeout: time.Duration(3 * time.Second),
+	}
 	response, err := httpClient.Do(request)
 	if err != nil {
 		log.Error("Make request to haveibeenpwned", "Error", err.Error())
