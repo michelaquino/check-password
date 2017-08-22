@@ -28,13 +28,12 @@ func GetMongoSession() *mgo.Session {
 func getNewMongoSession() (*mgo.Session, error) {
 	apiConfig := GetAPIConfig()
 	mongoDBDialInfo := &mgo.DialInfo{
-		Addrs: []string{
-			apiConfig.MongoDBConfig.Address,
-		},
-		Database: apiConfig.MongoDBConfig.DatabaseName,
-		Timeout:  apiConfig.MongoDBConfig.Timeout,
-		Username: apiConfig.MongoDBConfig.Username,
-		Password: apiConfig.MongoDBConfig.Password,
+		Addrs:          apiConfig.MongoDBConfig.Addresses,
+		ReplicaSetName: apiConfig.MongoDBConfig.ReplicaSetName,
+		Username:       apiConfig.MongoDBConfig.Username,
+		Password:       apiConfig.MongoDBConfig.Password,
+		Database:       apiConfig.MongoDBConfig.DatabaseName,
+		Timeout:        apiConfig.MongoDBConfig.Timeout,
 	}
 
 	session, err := mgo.DialWithInfo(mongoDBDialInfo)

@@ -1,12 +1,15 @@
 package context
 
 import (
-	"fmt"
+	"net/url"
 	"os"
 	"regexp"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
+
+	"github.com/labstack/gommon/log"
 )
 
 // LogConfig represents the log configuration
@@ -16,17 +19,19 @@ type LogConfig struct {
 
 // MongoConfig represents the MongoDB configuration
 type MongoConfig struct {
-	Address      string
-	DatabaseName string
-	Timeout      time.Duration
-	Username     string
-	Password     string
+	Addresses      []string
+	DatabaseName   string
+	Timeout        time.Duration
+	Username       string
+	Password       string
+	ReplicaSetName string
 }
 
 // APIConfig represents the API configuration
 type APIConfig struct {
 	LogConfig     *LogConfig
 	MongoDBConfig *MongoConfig
+	ProxyURL      *url.URL
 }
 
 var apiConfig *APIConfig
@@ -38,6 +43,7 @@ func GetAPIConfig() *APIConfig {
 		apiConfig = &APIConfig{
 			LogConfig:     getLogConfig(),
 			MongoDBConfig: getMongoConfig(),
+			ProxyURL:      getProxyURL(),
 		}
 	})
 
@@ -52,13 +58,11 @@ func getLogConfig() *LogConfig {
 
 func getMongoConfig() *MongoConfig {
 	mongoURL := os.Getenv("DBAAS_MONGODB_ENDPOINT")
-
-	pattern := regexp.MustCompile("(\\w+)://(.*):(.*)@(.*):([0-9]+)/(.*)?$")
+	pattern := regexp.MustCompile("(\\w+)://(.*):(.*)@(.*)/(.*)\\?replicaSet=(.*)$")
 	match := pattern.FindAllStringSubmatch(mongoURL, 3)
 
 	mongoConfig := MongoConfig{}
 	if len(match) > 0 {
-		fmt.Println("match: ", match)
 		if len(match[0]) > 2 {
 			mongoConfig.Username = match[0][2]
 		}
@@ -67,22 +71,20 @@ func getMongoConfig() *MongoConfig {
 			mongoConfig.Password = match[0][3]
 		}
 
-		mongoURL := ""
+		mongoURLList := []string{}
 		if len(match[0]) > 4 {
-			mongoURL = match[0][4]
+			mongoURLs := match[0][4]
+			mongoURLList = strings.Split(mongoURLs, ",")
 		}
 
-		mongoPort := 27017
+		mongoConfig.Addresses = mongoURLList
+
 		if len(match[0]) > 5 {
-			port, err := strconv.Atoi(match[0][5])
-			if err == nil {
-				mongoPort = port
-			}
+			mongoConfig.DatabaseName = match[0][5]
 		}
-		mongoConfig.Address = fmt.Sprintf("%s:%d", mongoURL, mongoPort)
 
 		if len(match[0]) > 6 {
-			mongoConfig.DatabaseName = match[0][6]
+			mongoConfig.ReplicaSetName = match[0][6]
 		}
 	}
 
@@ -105,4 +107,14 @@ func getMongoTimeout() time.Duration {
 	}
 
 	return time.Duration(mongoTimeout) * time.Second
+}
+
+func getProxyURL() *url.URL {
+	proxyURL, err := url.Parse(os.Getenv("PROXY_URL"))
+	if err != nil {
+		log.Error("Main", "createNewRelicApp", "", "", "", "Parse proxy url from env var", err.Error(), "Error on parse proxy url")
+		return nil
+	}
+
+	return proxyURL
 }
