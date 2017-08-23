@@ -8,8 +8,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-
-	"github.com/labstack/gommon/log"
 )
 
 // LogConfig represents the log configuration
@@ -112,7 +110,6 @@ func getMongoTimeout() time.Duration {
 func getProxyURL() *url.URL {
 	proxyURL, err := url.Parse(os.Getenv("PROXY_URL"))
 	if err != nil {
-		log.Error("Main", "createNewRelicApp", "", "", "", "Parse proxy url from env var", err.Error(), "Error on parse proxy url")
 		return nil
 	}
 

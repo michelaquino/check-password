@@ -135,5 +135,5 @@ func getLogLevel() zapcore.Level {
 		return zap.WarnLevel
 	}
 
-	return zap.ErrorLevel
+	return zap.DebugLevel
 }

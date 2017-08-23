@@ -21,6 +21,10 @@ docker-compose-stop-api:
 .PHONY: run
 run: docker-compose-build-api docker-compose-up-api
 
+.PHONY: build-hashcar-runner
+build-hashcar-runner:
+	GOOS=linux GOARCH=amd64 go build cmd/hashcat_runner.go
+
 ######################## TSURU ########################
 # Set environment variables
 .PHONY: set-tsuru-env-variables-prod

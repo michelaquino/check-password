@@ -27,3 +27,5 @@ services:
     #         - MONGO_DATABASE_NAME=check-password
     databaseMongo:
         image: mongo:3.4.7
+
+# LOG_LEVEL=debug DBAAS_MONGODB_ENDPOINT=mongodb://u_mongo_check_pa:ub3xBg78rX@mongocheck-01-150342212015.mongodb.globoi.com:27017,mongocheck-02-150342212015.mongodb.globoi.com:27017/mongo_check_password_prod?replicaSet=ReplicaSet_mongocheck150342212015
