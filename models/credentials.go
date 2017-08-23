@@ -21,6 +21,7 @@ import (
 type Credentials struct {
 	Email             string `form:"email" bson:"email"`
 	Password          string `form:"password" bson:"-"`
+	PartPassword      string `bson:"partPassword"`
 	EmailPwned        bool   `bson:"emailPwned"`
 	EmailLeakList     []leak `bson:"emailLeakList"`
 	PasswordPwned     bool   `bson:"passwordPwned"`
@@ -40,6 +41,7 @@ type Credentials struct {
 
 func (c *Credentials) SetPasswordHash() {
 	plainPassword := []byte(c.Password)
+	c.PartPassword = string(plainPassword[:3]) + "**********"
 
 	md5Hash := md5.Sum(plainPassword)
 	sha1Hash := sha1.Sum(plainPassword)
