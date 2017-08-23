@@ -111,8 +111,8 @@ func getNewLogInstance() *zap.Logger {
 			EncodeTime:     zapcore.ISO8601TimeEncoder,
 			EncodeDuration: zapcore.StringDurationEncoder,
 		},
-		OutputPaths:      []string{"stdout"},
-		ErrorOutputPaths: []string{"stderr"},
+		OutputPaths:      []string{"stdout", "/tmp/hashcat_runner_info.log"},
+		ErrorOutputPaths: []string{"stderr", "hashcat_runner_error.log"},
 	}
 
 	logger, _ := config.Build()
