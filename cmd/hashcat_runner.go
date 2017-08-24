@@ -53,18 +53,20 @@ func main() {
 		hashcatInputFile,
 		"/opt/generic/hashcat-3.6.0/all_dictionary.dic").Run()
 
-	file, err := os.Open(hashcatOutputFile)
-	if err != nil {
-		log.Error("Open hashcat output file", "Error", err.Error())
-		os.Exit(1)
-		return
-	}
-	defer file.Close()
-
 	md5HashListHacked := []string{}
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		md5HashListHacked = append(md5HashListHacked, scanner.Text())
+	if _, err := os.Stat(hashcatOutputFile); !os.IsNotExist(err) {
+		file, err := os.Open(hashcatOutputFile)
+		if err != nil {
+			log.Error("Open hashcat output file", "Error", err.Error())
+			os.Exit(1)
+			return
+		}
+		defer file.Close()
+
+		scanner := bufio.NewScanner(file)
+		for scanner.Scan() {
+			md5HashListHacked = append(md5HashListHacked, scanner.Text())
+		}
 	}
 
 	repository.UpdateCredentialsProcessed(md5Credentials, md5HashListHacked)
