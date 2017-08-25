@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"gitlab.globoi.com/michel.aquino/check-password/context"
-	"gitlab.globoi.com/michel.aquino/check-password/models"
-	"gitlab.globoi.com/michel.aquino/check-password/repository"
+	"github.com/michelaquino/check-password/context"
+	"github.com/michelaquino/check-password/models"
+	"github.com/michelaquino/check-password/repository"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/labstack/echo"

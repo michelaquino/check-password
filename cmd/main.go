@@ -3,9 +3,9 @@ package main
 import (
 	"net/http"
 
-	"gitlab.globoi.com/michel.aquino/check-password/context"
-	"gitlab.globoi.com/michel.aquino/check-password/handler"
-	"gitlab.globoi.com/michel.aquino/check-password/templates"
+	"github.com/michelaquino/check-password/context"
+	"github.com/michelaquino/check-password/handler"
+	"github.com/michelaquino/check-password/templates"
 
 	"github.com/labstack/echo"
 )

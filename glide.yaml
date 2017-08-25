@@ -1,4 +1,4 @@
-package: gitlab.globoi.com/michel.aquino/check-password
+package: github.com/michelaquino/check-password
 import:
 - package: github.com/labstack/echo
   version: v3.2.1

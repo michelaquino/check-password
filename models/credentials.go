@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	"gitlab.globoi.com/michel.aquino/check-password/context"
+	"github.com/michelaquino/check-password/context"
 
 	"golang.org/x/crypto/bcrypt"
 )

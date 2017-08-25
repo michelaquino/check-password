@@ -3,14 +3,14 @@
 FROM golang:latest
 
 # Copy the local package files to the container's workspace.
-ADD . /go/src/gitlab.globoi.com/michel.aquino/check-password
+ADD . /go/src/github.com/michelaquino/check-password
 
 # Build the api command inside the container.
-WORKDIR /go/src/gitlab.globoi.com/michel.aquino/check-password
+WORKDIR /go/src/github.com/michelaquino/check-password
 RUN GOOS=linux GOARCH=amd64 go build cmd/main.go
 
 # Run the outyet command by default when the container starts.
-ENTRYPOINT /go/src/gitlab.globoi.com/michel.aquino/check-password/main
+ENTRYPOINT /go/src/github.com/michelaquino/check-password/main
 
 # Document that the service listens on port 8888.
 EXPOSE 8888

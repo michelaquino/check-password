@@ -6,8 +6,8 @@ import (
 	"os"
 	"os/exec"
 
-	"gitlab.globoi.com/michel.aquino/check-password/context"
-	"gitlab.globoi.com/michel.aquino/check-password/repository"
+	"github.com/michelaquino/check-password/context"
+	"github.com/michelaquino/check-password/repository"
 )
 
 const (
